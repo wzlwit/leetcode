@@ -3,6 +3,7 @@
 * hard
 * https://leetcode.com/problems/unique-paths-iii/
 *
+
 * You are given an m x n integer array grid where grid[i][j] could be:
 
 1 representing the starting square. There is exactly one starting square.
@@ -11,8 +12,6 @@
 -1 representing obstacles that we cannot walk over.
 
 Return the number of 4-directional walks from the starting square to the ending square, that walk over every non-obstacle square exactly once.
-
-
 
 Example 1:
 
@@ -51,6 +50,14 @@ There is exactly one starting cell and one ending cell.
 
 * */
 
+/*
+ * SOLUTION:
+ * Runtime: 0 ms, faster than 100.00% of Java online submissions for Unique Paths III.
+ * Memory Usage: 36.2 MB, less than 80.66% of Java online submissions for Unique Paths III.
+* * */
+
+
+import lib.FormatPrinter.*;
 
 public class H_0980uniquePathIII_bitmask {
     public static int rowSize = 0;
@@ -64,54 +71,24 @@ public class H_0980uniquePathIII_bitmask {
     public static int endRow = -1;
     public static int endCol = -1;
 
-//    public static void print2dAry(int[][] ary2d) {
-//        for (int i = 0; i < ary2d.length; i++) {
-//            for (int j = 0; j < ary2d[0].length; j++) {
-//                System.out.print(ary2d[i][j] + " ");
-//            }
-//            System.out.println("");
-//        }
-//    }
-
-    public static void printBitString(int num) {
-        String str = Integer.toBinaryString(num);
-        int strLen = str.length();
-        for (int i = strLen; i < colSize * rowSize; i++) {
-            str = "0" + str;
-        }
-        for (int i = rowSize; i > 0; i--) {
-            for (int j = colSize; j > 0; j--) {
-                System.out.print(str.charAt(i * j - 1) + "");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
     public static void patrol(int boardBit, int row, int col, int step) {
-        if (row >= 1 && row <= rowSize && col >= 1 && col <= colSize) {
-            System.out.println("step: " + step + "/" + totalStep);
-            System.out.println("old:");
-            printBitString(boardBit);
-
-            int posBit = (1 << (row * col));
-            System.out.println("position: " + Integer.toBinaryString(posBit));
-
+        if (row >= 0 && row < rowSize && col >= 0 && col < colSize) {
+            int posBit = (1 << (row * colSize + col));
             int newBoardBit = (boardBit | posBit);
-            System.out.println("new:" + row + " | " + col);
-//            System.out.println(boardBit + " ==> " + newBoardBit);
-            printBitString(newBoardBit);
+
             if (boardBit != newBoardBit) {
-                if (step < totalStep && !(col == endCol && row == endRow)) {
-                    patrol(newBoardBit, row, col + 1, step + 1);
-                    patrol(newBoardBit, row, col - 1, step + 1);
-                    patrol(newBoardBit, row + 1, col, step + 1);
-                    patrol(newBoardBit, row - 1, col, step + 1);
+//                System.out.println("step (" + step + "/" + totalStep + "); position (" + row + "," + col + ")");
+//                System.out.println(String.valueOf((new StringBuilder(Integer.toBinaryString(posBit)).reverse())));
+//                System.out.println(String.valueOf((new StringBuilder(Integer.toBinaryString(newBoardBit)).reverse())));
+
+                if (step < totalStep && (col != endCol || row != endRow)) {
+                    step++;
+                    patrol(newBoardBit, row, col + 1, step);
+                    patrol(newBoardBit, row, col - 1, step);
+                    patrol(newBoardBit, row + 1, col, step);
+                    patrol(newBoardBit, row - 1, col, step);
                 } else if (step == totalStep && col == endCol && row == endRow) {
                     routeCount++;
-                    System.out.println("num of path: " + routeCount + "\n");
-
-//                print2dAry(boardBit);
                 }
             }
         }
@@ -133,19 +110,20 @@ public class H_0980uniquePathIII_bitmask {
         for (int i = 0; i < rowSize; i++) {
             for (int j = 0; j < colSize; j++) {
                 if (grid[i][j] == -1) {
-                    boardBit = boardBit | 1 << (i + 1) * (j + 1);
+                    boardBit = boardBit | (1 << i * colSize + j);
                     totalStep--;
                 } else if (grid[i][j] == 1) {
-                    startRow = i + 1;
-                    startCol = j + 1;
+                    startRow = i;
+                    startCol = j;
                 } else if (grid[i][j] == 2) {
-                    endRow = i + 1;
-                    endCol = j + 1;
+                    endRow = i;
+                    endCol = j;
                 }
-//               fullBit = fullBit | (1 << i+1) * (j+1);
             }
         }
-        System.out.println("board: " + boardBit + " ; start point: " + startRow + " | " + startCol);
+
+//        System.out.println("step needed: " + totalStep);
+//        System.out.println("board: " + boardBit + " ; start point: " + startRow + " | " + startCol);
         patrol(boardBit, startRow, startCol, 0);
 
         return routeCount;
@@ -159,15 +137,15 @@ public class H_0980uniquePathIII_bitmask {
         int[][] grid1 = {{1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 2, -1}};
         System.out.println(uniquePathsIII(grid1));
 
-////        Input: grid = [[1,0,0,0],[0,0,0,0],[0,0,0,2]]
-////        Output: 4
-//        int[][] grid2 = {{1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 2}};
-//        System.out.println(uniquePathsIII(grid2));
-//
-////        Input: grid = [[0,1],[2,0]]
-////        Output: 0
-//        int[][] grid3 = {{0, 1}, {2, 0}};
-//        System.out.println(uniquePathsIII(grid3));
+//        Input: grid = [[1,0,0,0],[0,0,0,0],[0,0,0,2]]
+//        Output: 4
+        int[][] grid2 = {{1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 2}};
+        System.out.println(uniquePathsIII(grid2));
+
+//        Input: grid = [[0,1],[2,0]]
+//        Output: 0
+        int[][] grid3 = {{0, 1}, {2, 0}};
+        System.out.println(uniquePathsIII(grid3));
 
         System.out.println("Time used in milli: " + (System.currentTimeMillis() - milliStart));
     }

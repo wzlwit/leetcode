@@ -3,8 +3,6 @@
 * hard
 * https://leetcode.com/problems/unique-paths-iii/
 *
-* 43ms / 38.9MB
-*
 * You are given an m x n integer array grid where grid[i][j] could be:
 
 1 representing the starting square. There is exactly one starting square.
@@ -53,6 +51,9 @@ There is exactly one starting cell and one ending cell.
 
 * */
 
+/* SOLUTION:
+*  43ms / 38.9MB
+* */
 
 public class H_0980uniquePathIII_backtrack_heuristic {
     public static int rowSize = 0;
@@ -88,7 +89,7 @@ public class H_0980uniquePathIII_backtrack_heuristic {
                 patrol(board4, row - 1, col, step + 1);
             } else if (board[row][col] == -2 && step == totalStep && col == endPoint[1] && row == endPoint[0]) {
                 routeCount++;
-//                print2dAry(board);
+//                print2dAry(board);    //print out the path as a matrix
             }
 
         }
